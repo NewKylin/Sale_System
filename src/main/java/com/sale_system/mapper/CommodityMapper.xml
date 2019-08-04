@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sale_system.mapper.CommodityMapper">
+    <!-- resultMap映射 -->
+    <resultMap type="com.sale_system.po.Commodity" id="commodityRM">
+        <!-- 主键 -->
+        <id property="id" column="id" jdbcType="INTEGER" />
+        <!-- 一般属性 -->
+        <result property="name" column="cname" jdbcType="VARCHAR"/>
+        <result property="price" column="cprice" jdbcType="DOUBLE"/>
+        <result property="desc" column="cdesc"/>
+        <result property="weight" column="weight" jdbcType="INTEGER"/>
+        <result property="model" column="model" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!-- 查询一个 -->
+    <select id="selectById" parameterType="int" resultMap="commodityRM">
+		select * from commodity
+		where id=#{id}
+	</select>
+
+    <!-- 查询 -->
+    <select id="selectAll" resultMap="commodityRM">
+		select * from commodity
+	</select>
+
+    <insert id="insert" parameterType="com.sale_system.po.Commodity">
+        insert into commodity
+        (<if test="id !=null">ID,</if>CNAME,CPRICE,CDESC,WEIGHT,MODEL)
+        values
+        (
+        <if test="id !=null">
+            #{id,jdbcType=INTEGER},
+        </if>
+        #{name,jdbcType=VARCHAR},
+        #{price,jdbcType=DOUBLE},
+        #{desc},
+        #{weight,jdbcType=INTEGER},
+        #{model,jdbcType=VARCHAR}
+        )
+    </insert>
+
+    <!-- 修改语句 -->
+    <update id="update" parameterType="com.sale_system.po.Commodity">
+        update commodity
+        <set>
+            <if test="name != null">cname=#{name},</if>
+            <if test="price != null">cprice=#{price},</if>
+            <if test="desc != null">cdesc = #{desc},</if>
+            <if test="weight != null">weight=#{weight},</if>
+            <if test="model != null">model=#{model}</if>
+        </set>
+        where id=#{id}
+    </update>
+
+    <!-- 删除一条 -->
+    <delete id="deleteById" parameterType="int">
+		delete from commodity
+		where id=#{id}
+	</delete>
+</mapper>
