@@ -15,9 +15,11 @@
 
     <!-- 消费者对象 -->
     <bean id="itemMQHandler" class="com.sale_system.mq.handle.ItemMQHandler"/>
+    <bean id="logMQHandler" class="com.sale_system.mq.handle.LogMQHandler"/>
     <!-- 监听对象 -->
-    <rabbit:listener-container connection-factory="connectionFactory">
-        <!-- ref为监听对象、method为有消息之后通知的方法名 -->
+  <!--  <rabbit:listener-container connection-factory="connectionFactory">
+        &lt;!&ndash; ref为监听对象、method为有消息之后通知的方法名 &ndash;&gt;
         <rabbit:listener ref="itemMQHandler" method="execute" queue-names="JACK-WEB-ITEM-QUEUE"/>
-    </rabbit:listener-container>
+        <rabbit:listener ref="logMQHandler" method="execute" queue-names="JACK-WEB-LOG"/>
+    </rabbit:listener-container>-->
 </beans>

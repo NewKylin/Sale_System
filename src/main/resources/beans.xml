@@ -50,6 +50,44 @@
         <property name="dataSource" ref="dataSource"/>
     </bean>
 
+    <!--哨兵配置-->
+    <bean id="sentinelConfig" class="org.springframework.data.redis.connection.RedisSentinelConfiguration">
+        <property name="master">
+            <bean class="org.springframework.data.redis.connection.RedisNode">
+                <property name="name" value="mymaster"/>
+            </bean>
+        </property>
+        <property name="sentinels">
+            <set>
+                <bean class="org.springframework.data.redis.connection.RedisNode">
+                    <constructor-arg name="host" value="192.168.61.137"/>
+                    <constructor-arg name="port" value="26370"/>
+                </bean>
+            </set>
+        </property>
+    </bean>
+    <bean id="poolConfig" class="redis.clients.jedis.JedisPoolConfig">
+        <property name="maxIdle" value="50"/>
+        <property name="maxTotal" value="100"/>
+        <property name="maxWaitMillis" value="20000"/>
+    </bean>
+    <bean id="redisConnectionFactory" class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory">
+        <property name="hostName" value="192.168.61.136"/>
+        <property name="port" value="6379"/>
+<!--        <constructor-arg name="sentinelConfig" ref="sentinelConfig"/>
+        <constructor-arg name="poolConfig" ref="poolConfig"/>-->
+        <property name="poolConfig" ref="poolConfig"/>
+        <constructor-arg ref="poolConfig"/>
+    </bean>
+    <bean id="jdkSerializationRedisSerializer" class="org.springframework.data.redis.serializer.JdkSerializationRedisSerializer"></bean>
+    <bean id="stringRedisSerializer" class="org.springframework.data.redis.serializer.StringRedisSerializer"></bean>
+    <bean id="redisTemplate" class="org.springframework.data.redis.core.RedisTemplate">
+        <property name="connectionFactory" ref="redisConnectionFactory"/>
+        <property name="keySerializer" ref="stringRedisSerializer"/>
+        <property name="valueSerializer" ref="jdkSerializationRedisSerializer"/>
+        <property name="defaultSerializer" ref="stringRedisSerializer"/>
+    </bean>
+
     <!-- 事务通知 -->
     <tx:advice id="txAdivce" transaction-manager="txManager">
         <tx:attributes>
