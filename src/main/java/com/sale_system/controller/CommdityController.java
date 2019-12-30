@@ -34,7 +34,7 @@ public class CommdityController {
     public String add(Model model,Commodity commodity){
         commodityService.insert(commodity);
         return list(model);
-    }
+}
 
     @RequestMapping("/commodity/toEdit.action")
     public String toEdit(Model model,Integer id){
