@@ -11,6 +11,8 @@ import org.springframework.data.redis.core.*;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.JdkSerializationRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
+import redis.clients.jedis.Jedis;
+import redis.clients.jedis.Pipeline;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -27,8 +29,9 @@ public class RedisTest {
     public void testConnection(){
 
         RedisTemplate template = ctx.getBean(RedisTemplate.class);
-        template.opsForValue().set("key1","asd");
-        String value = template.opsForValue().get("key1").toString();
+        template.setValueSerializer(new StringRedisSerializer());
+        String k1 = template.opsForValue().get("k1").toString();
+        
     }
     @Test
     public void testQueue(){
@@ -170,5 +173,34 @@ public class RedisTest {
                 System.out.println(obj.toString());
             }
         }
+    }
+    static RedisClient redisClient = new RedisClient();
+    static Jedis jedis = redisClient.getJedis();
+    /**
+     * 测试tweproxy管道
+     */
+    @Test
+    public void testTweProxy(){
+
+        Pipeline pipelined = jedis.pipelined();
+
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Pipeline pipelined = jedis.pipelined();
+                pipelined.set("key1".getBytes(),"123".getBytes());
+                pipelined.set("ddd".getBytes(),"321".getBytes());
+                System.out.println("here");
+                while (true){}
+            }
+        });
+        thread.start();
+
+        try {
+            Thread.sleep(10000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        pipelined.sync();
     }
 }
